@@ -17,8 +17,26 @@ const favicon = require("serve-favicon");
 // https://www.npmjs.com/package/path
 const path = require("path");
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const app = require("../app");
+
+
+const MONGO_URI = require('../utils/consts');
+
+
 // Middleware configuration
 module.exports = (app) => {
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET || 'super hyper secret key',
+      resave: false,
+      saveUninitialized: false,
+      store: MongoStore.create({
+        mongoUrl: MONGO_URI,
+      }),
+    })
+  )
   // In development environment the app logs
   app.use(logger("dev"));
 
